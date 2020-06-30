@@ -1,1 +1,1 @@
-worker: python smt.py
+worker: python bot.py
