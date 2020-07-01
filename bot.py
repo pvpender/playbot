@@ -61,7 +61,7 @@ async def ga(msg: types.message):
     r = c.fetchone()
     c_t = datetime.now()
     if r == None:
-        c.execute("INSERT INTO em(id, pol) VALUES(?,?)", (msg.from_user.id, 100000))
+        c.execute("INSERT INTO em(id, pol) VALUES(?,?)", (msg.from_user.id, 100))
         c1.execute("INSERT INTO om(id,p1,p2,p3,p4,p5, p6) VALUES(?,?,?,?,?,?,?)", (msg.from_user.id,c_t.year, c_t.month,c_t.day,c_t.hour, c_t.minute, c_t.second))
         c2.execute("INSERT INTO sd(id, col, st) VALUES(?,?,?)", (msg.from_user.id, 1, 10))
         ar.execute("INSERT INTO army(id, strong) VALUES(?,?)",(msg.from_user.id,0))
