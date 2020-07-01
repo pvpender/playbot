@@ -61,7 +61,7 @@ async def ga(msg: types.message):
     r = c.fetchone()
     c_t = datetime.now()
     if r == None:
-        c.execute("INSERT INTO em(id, pol) VALUES(?,?)", (msg.from_user.id, 10))
+        c.execute("INSERT INTO em(id, pol) VALUES(?,?)", (msg.from_user.id, 100000))
         c1.execute("INSERT INTO om(id,p1,p2,p3,p4,p5, p6) VALUES(?,?,?,?,?,?,?)", (msg.from_user.id,c_t.year, c_t.month,c_t.day,c_t.hour, c_t.minute, c_t.second))
         c2.execute("INSERT INTO sd(id, col, st) VALUES(?,?,?)", (msg.from_user.id, 1, 10))
         ar.execute("INSERT INTO army(id, strong) VALUES(?,?)",(msg.from_user.id,0))
@@ -148,8 +148,11 @@ async def army(msg: types.message):
     try:
      ar.execute("SELECT strong FROM army WHERE id =?",(msg.from_user.id,))
      r = ar.fetchone()
-     b_b = types.InlineKeyboardButton ("Усилить армию", callback_data='a1')
-     b_k = types.InlineKeyboardMarkup().add(b_b)
+     b_b = types.InlineKeyboardButton ("Усилить на 1", callback_data='a1')
+     b_b1 = types.InlineKeyboardButton ("Усилить 10", callback_data='a2')
+     b_b2 = types.InlineKeyboardButton("Усилить 25", callback_data='a3')
+     b_b3 = types.InlineKeyboardButton("Усилить на 100", callback_data='a4')
+     b_k = types.InlineKeyboardMarkup().add(b_b,b_b1,b_b2,b_b3)
      print(msg.message_id + 1)
      await msg.answer("@%(j)s Сила твоей армии: %(a)i"%{"j":msg.from_user.username, "a":r[0]}, reply_markup = b_k)
     except:
@@ -171,6 +174,66 @@ async def army(msg: types.message):
             await m.answer("Ты усилил армию! Теперь её сила равна: %(a)i"%{"a":r[0]+1})
             o = m.message.message_id
             print(o)
+        except:
+            await m.answer("Ты ещё не начал игру! Нажми /start и создай великую империю!")
+
+    @dp.callback_query_handler(lambda m: m.data == 'a2')
+    async def barm(m):
+        try:
+            ar.execute("SELECT strong FROM army WHERE id =?", (m.from_user.id,))
+            c.execute("SELECT pol FROM em WHERE id = ?", (m.from_user.id,))
+            r = ar.fetchone()
+            r1 = c.fetchone()
+            if (r1[0] < 100):
+                await m.answer("""❗️Не хватает денег!
+    ❕ Нужно: 100
+    💰 У тебя: %(g)i""" % {"g": r1[0]})
+            else:
+                c.execute("UPDATE em SET pol = ? WHERE id = ?", (r1[0] - 100, m.from_user.id))
+                ar.execute("UPDATE army SET strong = ? WHERE id = ?", (r[0] + 10, m.from_user.id))
+                await m.answer("Ты усилил армию! Теперь её сила равна: %(a)i" % {"a": r[0] + 10})
+                o = m.message.message_id
+                print(o)
+        except:
+            await m.answer("Ты ещё не начал игру! Нажми /start и создай великую империю!")
+
+    @dp.callback_query_handler(lambda m: m.data == 'a3')
+    async def barm(m):
+        try:
+            ar.execute("SELECT strong FROM army WHERE id =?", (m.from_user.id,))
+            c.execute("SELECT pol FROM em WHERE id = ?", (m.from_user.id,))
+            r = ar.fetchone()
+            r1 = c.fetchone()
+            if (r1[0] < 250):
+                await m.answer("""❗️Не хватает денег!
+    ❕ Нужно: 250
+    💰 У тебя: %(g)i""" % {"g": r1[0]})
+            else:
+                c.execute("UPDATE em SET pol = ? WHERE id = ?", (r1[0] - 250, m.from_user.id))
+                ar.execute("UPDATE army SET strong = ? WHERE id = ?", (r[0] + 25, m.from_user.id))
+                await m.answer("Ты усилил армию! Теперь её сила равна: %(a)i" % {"a": r[0] + 25})
+                o = m.message.message_id
+                print(o)
+        except:
+            await m.answer("Ты ещё не начал игру! Нажми /start и создай великую империю!")
+
+    @dp.callback_query_handler(lambda m: m.data == 'a4')
+    async def barm(m):
+        try:
+            ar.execute("SELECT strong FROM army WHERE id =?", (m.from_user.id,))
+            c.execute("SELECT pol FROM em WHERE id = ?", (m.from_user.id,))
+            r = ar.fetchone()
+            r1 = c.fetchone()
+            if (r1[0] < 1000):
+                await m.answer("""❗️Не хватает денег!
+    ❕ Нужно: 1000
+    💰 У тебя: %(g)i""" % {"g": r1[0]})
+            else:
+                c.execute("UPDATE em SET pol = ? WHERE id = ?", (r1[0] - 1000, m.from_user.id))
+                ar.execute("UPDATE army SET strong = ? WHERE id = ?", (r[0] + 100, m.from_user.id))
+                await m.answer("Ты усилил армию! Теперь её сила равна: %(a)i" % {"a": r[0] + 100})
+                o = m.message.message_id
+                print(o)
         except:
             await m.answer("Ты ещё не начал игру! Нажми /start и создай великую империю!")
 
