@@ -243,20 +243,25 @@ async def but(msg: types.message):
     try:
       m_i = msg.message_id +1
       bu.execute("INSERT INTO bu(id, per1,per2) VALUES(?,?,?)",(m_i, msg.from_user.id, msg.from_user.username))
-      print(msg.from_user,id)
+      print(msg.from_user.id)
       s_b = InlineKeyboardButton("Вступить в битву!", callback_data='sb')
       s_k = InlineKeyboardMarkup().add(s_b)
+      print(msg.message_id)
       await msg.answer("@%(a)s приглашает на битву!"%{"a":msg.from_user.username}, reply_markup=s_k)
     except:
         await msg.answer("Ты ещё не начал игру!")
     @dp.callback_query_handler(lambda m: m.data == 'sb')
     async def bitva(m):
-       try:
+    #   try:
             ar.execute("SELECT strong FROM army WHERE id=?",(m.from_user.id,))
             p2 = ar.fetchone()
             bu.execute("SELECT per1, per2 FROM bu WHERE id = ?", (m.message.message_id,))
             i1 = bu.fetchone()
+            print(m.message.message_id)
             print(i1)
+            if i1 == None:
+                 bu.execute("SELECT per1, per2 FROM bu WHERE id = ?", (m.message.message_id,))
+                 i1 = bu.fetchone()
             ar.execute("SELECT strong FROM army WHERE id=?", (i1[0],))
             p1 = ar.fetchone()
             if (m.from_user.id == i1[0]):
@@ -282,7 +287,7 @@ async def but(msg: types.message):
                       ne = moni[0]+uvel[0] * 5
                       c.execute("UPDATE em SET pol = ? WHERE id = ?",(ne,i1[0]))
                       await bot.send_message(i1[0],'Ты победил!')
-                  if (p1[0]<p2[0]):
+                  elif (p1[0]<p2[0]):
                       print(p1[0])
                       print(p2[0])
                       r2 = p2[0] - p1[0]
@@ -299,7 +304,7 @@ async def but(msg: types.message):
                       ne = moni[0] + uvel[0] * 5
                       c.execute("UPDATE em SET pol = ? WHERE id = ?", (ne,m.from_user.id))
                       await bot.send_message(m.from_user.id, 'Ты победил!')
-                  if (p1[0] == p2[0]):
+                  elif (p1[0] == p2[0]):
                       r2 = 0
                       r1 = 0
                       ar.execute("UPDATE army SET strong = ? WHERE id = ?", (r1, i1[0]))
@@ -309,8 +314,8 @@ async def but(msg: types.message):
                       await bot.edit_message_text(chat_id=m.message.chat.id, message_id=m.message.message_id,text='🤝Ничья! Никто не одержал победу!🤝')
                       await bot.send_message(m.from_user.id, 'Ничья!')
                       await bot.send_message(i1[0], 'Ничья!')
-       except:
-           await m.answer('Ты ещё не начал игру! ')
+      # except:
+         #  await m.answer('Ты ещё не начал игру! ')
 
 
 
