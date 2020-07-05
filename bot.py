@@ -317,6 +317,11 @@ async def but(msg: types.message):
       # except:
          #  await m.answer('Ты ещё не начал игру! ')
 
+@dp.message_handler(commands=['save'])
+async def sav(msg : types.message):
+     while True:
+        await msg.answer('сохранение')
+        await asyncio.sleep(1740)
 
 
 
